@@ -1,0 +1,1 @@
+{"version":3,"file":"balance-inquiry-req.js","sourceRoot":"","sources":["../../../../models/profile/balance-inquiry/balance-inquiry-req.ts"],"names":[],"mappings":";;;;;;AACA,oDAA4B;AAG5B,+BAA+B;AAClB,QAAA,iBAAiB,GAAG,aAAG,CAAC,MAAM,EAAE,CAAC,IAAI,CAAC;IAGhD,qBAAqB;IACrB,MAAM,EAAE,aAAG,CAAC,MAAM,EAAE,CAAC,QAAQ,EAAE;IAE/B,aAAa,EAAE,aAAG,CAAC,MAAM,EAAE;CAC7B,CAAC,CAAC"}
