@@ -11,10 +11,10 @@ class PinService {
 
     async setTransactionPin(requestId: string, userInfo: ISetTransactionPin) {
         return new Promise<IResponse>(async (resolve, reject) => {
-            let response: IResponse;
+            let response: IResponse = null;
             //Validate user
             let hashedPass = cipher.hash(userInfo.password);
-            user.findOne({ phone: userInfo.phone })
+            await user.findOne({ phone: userInfo.phone })
                 .then(async doc => {
                     if (doc) {
                         //Verify password is correct

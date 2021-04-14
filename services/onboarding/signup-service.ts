@@ -88,7 +88,7 @@ class SignupService {
                                                 isVerifiedLevel: true
                                             }
                                         }
-                                        response = responseHandler.commitResponse(requestId, ResponseCodes.SUCCESS, `Welcome to ${Config.AppName}!`, user);
+                                        response = responseHandler.commitResponse(requestId, ResponseCodes.SUCCESS, `Welcome to ${process.env.AppName}!`, user);
 
                                         //send welcome email
                                         emailManager.sendWelcomeEmail(requestId, newUser.firstname, newUser.email);
@@ -108,15 +108,16 @@ class SignupService {
         });
     }
 
-    async generateAdditionalBankAcount(requestId: string, phoneNumber: string){
+    async generateAdditionalBankAcount(requestId: string, req: any){
         return new Promise<IResponse>(async (resolve, reject)=>{
+            const { phone, depositAmount } = req;
             let response: IResponse = null;
-            await searchService.getUserProfile(requestId, phoneNumber)
+            await searchService.getUserProfile(requestId, phone)
             .then(async res=>{
                 if(res.code == ResponseCodes.SUCCESS){
                     let appUser: IUser = res.data;
                     //Generate New Account and Update User Profile
-                    await this.generateBankAccount(requestId).then(async newAccount=>{
+                    await this.generateBankAccount(requestId, depositAmount).then(async newAccount=>{
                         if(newAccount == null){
                             response = responseHandler.commitResponse(requestId, ResponseCodes.UNSUCCESSFUL, 'Sorry, account generation failed. Please retry in a moment');
                         }
@@ -131,7 +132,7 @@ class SignupService {
                                 }
                             }
 
-                            await users.updateOne({ phone: phoneNumber }, update)
+                            await users.updateOne({ phone: phone }, update)
                             .then(success => {
             
                                 
@@ -139,7 +140,7 @@ class SignupService {
                                     accountNo: newAccount?.accountNumber,
                                     accountName: `${appUser.firstname} ${appUser.lastname}`,
                                     currency: newAccount?.currency,
-                                    balance: 0
+                                    balance: newAccount.balance
                                 }
                                 response = responseHandler
                                         .commitResponse(requestId, ResponseCodes.SUCCESS, 'Bank Account created successfully', bankAccount);
@@ -167,11 +168,11 @@ class SignupService {
         })
     }
 
-    private generateBankAccount(requestId: string){
+    private generateBankAccount(requestId: string, depositAmount: number = 0){
         return new Promise<IBankAccount>(async (resolve, reject)=>{
             let response = null;
             let bankAcount: IBankAccount = null;
-            const randomNumber: number = Math.floor(Math.random() * (100000 - 999998 + 1)) + 999998;
+            const randomNumber: number = Math.floor(Math.random() * (1000000 - 9999998 + 1)) + 9999998;
             const bankPrefix: number = 901;
             const accountNumber = `${bankPrefix}${randomNumber}`
             await this.checkIfAccountNumberExist(requestId, accountNumber)
@@ -184,7 +185,7 @@ class SignupService {
                     bankAcount = {
                         accountId: responseHandler.generateUniqueId(),
                         currency: process.env.DefaultCurrency,
-                        balance: 0,
+                        balance: depositAmount,
                         lien: 0,
                         accountNumber: accountNumber,
                         createdAt: new Date()

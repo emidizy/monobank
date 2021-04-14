@@ -43,7 +43,7 @@ class ProfileController {
         next();
     }
 
-    async getWalletBalance(req: any, res: any, next) {
+    async getUserAccountBalance(req: any, res: any, next) {
         
         let response = null;
         let status: Number = 200;
@@ -77,6 +77,32 @@ class ProfileController {
         res.status(status).send(response);
         next();
     }
+
+    async getAllUsers(req: any, res: any, next) {
+        
+        let response = null;
+        let status: Number = 200;
+        let requestId = responseHandler.generateUniqueId();
+        console.log(requestId);
+        try {
+                await profileSearchService.getAllUsersInRawDatabaseFormat(requestId).then(resp=>{
+                    response = resp;
+                })
+                .catch(err=>{
+                    response = err;
+                });
+           
+        } 
+        catch (err) {
+            
+            response = responseHandler.handleException(requestId)
+        }
+        
+        res.locals.logInfo = response;
+        res.status(status).send(response);
+        next();
+    }
+
 
 }
 

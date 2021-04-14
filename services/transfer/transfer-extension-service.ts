@@ -138,11 +138,11 @@ class TransferExtensionService {
         return Promise.resolve(response);
     }
 
-    getTransactionCharge(requestId: string, amount: number, transferType: 'intra'){
-        return new Promise<IResponse>((resolve, reject)=>{
+    getTransactionCharge(requestId: string, amount: number, transferType: 'intrabank'){
+        return new Promise<IResponse>(async (resolve, reject)=>{
             let response: IResponse = null;
 
-            fees.findOne({}, {_id: 0})
+            await fees.findOne({}, {_id: 0})
             .then(data=>{
                 if(!data){
                     response = responseHandler
@@ -154,7 +154,7 @@ class TransferExtensionService {
                     let charges: ITransactionCharge;
                     let txCharge = 0;
 
-                    if(transferType == 'intra'){
+                    if(transferType == 'intrabank'){
                         const bankCharges: IBankTransferFee = transferFees?.bankTransfer[0];
                         if(amount < 5000){
                             txCharge = bankCharges?.below5K;
@@ -167,13 +167,15 @@ class TransferExtensionService {
                         }
 
                         charges = {
-                            txCharge: 0,
+                            txCharge: txCharge,
                             rates: bankCharges
                         }
-                        
+                        response = responseHandler.commitResponse(requestId, ResponseCodes.SUCCESS, 'Success! charges retrieved', charges);
 
                     }
-                    response = responseHandler.commitResponse(requestId, ResponseCodes.SUCCESS, 'Success! charges retrieved', charges);
+                    else{
+                        response = responseHandler.commitResponse(requestId, ResponseCodes.NOT_FOUND, 'Invalid transation type. Transaction type must be \'intrabank\'', charges);
+                    }
                 }
 
                 resolve(response);

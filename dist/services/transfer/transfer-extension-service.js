@@ -142,9 +142,9 @@ class TransferExtensionService {
         });
     }
     getTransactionCharge(requestId, amount, transferType) {
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
             let response = null;
-            fees_1.default.findOne({}, { _id: 0 })
+            yield fees_1.default.findOne({}, { _id: 0 })
                 .then(data => {
                 if (!data) {
                     response = response_handler_1.default
@@ -154,7 +154,7 @@ class TransferExtensionService {
                     const transferFees = data.toJSON();
                     let charges;
                     let txCharge = 0;
-                    if (transferType == 'intra') {
+                    if (transferType == 'intrabank') {
                         const bankCharges = transferFees === null || transferFees === void 0 ? void 0 : transferFees.bankTransfer[0];
                         if (amount < 5000) {
                             txCharge = bankCharges === null || bankCharges === void 0 ? void 0 : bankCharges.below5K;
@@ -166,11 +166,14 @@ class TransferExtensionService {
                             txCharge = bankCharges === null || bankCharges === void 0 ? void 0 : bankCharges.above50K;
                         }
                         charges = {
-                            txCharge: 0,
+                            txCharge: txCharge,
                             rates: bankCharges
                         };
+                        response = response_handler_1.default.commitResponse(requestId, response_codes_1.ResponseCodes.SUCCESS, 'Success! charges retrieved', charges);
                     }
-                    response = response_handler_1.default.commitResponse(requestId, response_codes_1.ResponseCodes.SUCCESS, 'Success! charges retrieved', charges);
+                    else {
+                        response = response_handler_1.default.commitResponse(requestId, response_codes_1.ResponseCodes.NOT_FOUND, 'Invalid transation type. Transaction type must be \'intrabank\'', charges);
+                    }
                 }
                 resolve(response);
             })
@@ -181,7 +184,7 @@ class TransferExtensionService {
                     .handleException(requestId, 'Sorry, we could not determine charges at the moment. Please retry later');
                 reject(response);
             });
-        });
+        }));
     }
     isTransactionLimitExceeded(requestId, user, accountNumber, amount) {
         var _a, _b;

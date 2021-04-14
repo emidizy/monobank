@@ -32,7 +32,8 @@ class ProfileRoutes {
     }
     initRoutes() {
         this.routes.post('/search', profile_controller_1.default.searchUser);
-        this.routes.post('/inquiry/wallet/balance', profile_controller_1.default.getWalletBalance);
+        this.routes.get('/users/all', profile_controller_1.default.getAllUsers);
+        this.routes.post('/inquiry/account/balance', profile_controller_1.default.getUserAccountBalance);
     }
 }
 exports.default = new ProfileRoutes();

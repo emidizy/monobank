@@ -9,8 +9,6 @@ export const loginReq = joi.object().keys({
 
    password: joi.string().required(),
 
-   notificationId: joi.string().required(),
-
    appVersion: joi.string().optional()
 
 });

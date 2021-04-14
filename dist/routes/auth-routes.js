@@ -25,6 +25,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 //Initialize express router 
 const express = __importStar(require("express"));
 const login_controller_1 = __importDefault(require("../controllers/login-controller"));
+const pin_controller_1 = __importDefault(require("../controllers/pin-controller"));
 class AuthRoutes {
     constructor() {
         this.routes = express.Router();
@@ -32,6 +33,7 @@ class AuthRoutes {
     }
     initRoutes() {
         this.routes.post('/login', login_controller_1.default.doLogin);
+        this.routes.post('/pin/set', pin_controller_1.default.setTransactionPin);
     }
 }
 exports.default = new AuthRoutes();

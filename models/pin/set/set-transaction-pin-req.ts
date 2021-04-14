@@ -7,8 +7,6 @@ export const setTransactionPinReq = joi.object().keys({
     // and must be a string of the format +234XXXXXXXXXX
     // where X is a digit (0-9)
     phone: joi.string().regex(/(\+)\d{13}$/).required(),
-
-    walletId: joi.string().required(),
     
     password: joi.string().required(),
 

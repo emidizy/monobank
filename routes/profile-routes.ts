@@ -11,7 +11,8 @@ class ProfileRoutes {
 
     private initRoutes(){
         this.routes.post('/search', profileController.searchUser);
-        this.routes.post('/inquiry/wallet/balance', profileController.getWalletBalance);
+        this.routes.get('/users/all', profileController.getAllUsers);
+        this.routes.post('/inquiry/account/balance', profileController.getUserAccountBalance);
     }
     
 

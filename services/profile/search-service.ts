@@ -18,7 +18,7 @@ class ProfileSearchService {
 
             if(!searchByPhone && nameToSearch){
                 searchCondition = {$and: [
-                    {is_active: true}, 
+                    {isActive: true}, 
                     {$or: [ 
                         {firstname : {$regex : nameToSearch, $options : 'i'}},
                         {lastname : {$regex : nameToSearch, $options : 'i'}}
@@ -27,7 +27,7 @@ class ProfileSearchService {
             }
             else if(searchByPhone && phoneToSearch) {
                 searchCondition = {$and: [
-                    {is_active: true}, 
+                    {isActive: true}, 
                     {phone : phoneToSearch } 
                 ]};
             }
@@ -96,7 +96,7 @@ class ProfileSearchService {
             if(accountNumber){
                 searchCondition = {
                     $and: [
-                        {is_active: true}, 
+                        {isActive: true}, 
                         {bankAccountInfo: 
                             {
                                 $elemMatch: {accountNumber: accountNumber}
@@ -218,6 +218,39 @@ class ProfileSearchService {
         });
 
     }
+
+    async getAllUsersInRawDatabaseFormat(requestId: string) {
+        return new Promise<IResponse>(async (resolve, reject) => {
+            let result: any;
+            let response: IResponse = null;
+            const condition = {}
+            
+            await users.find(condition, {_id: 0, password: 0, pin: 0}).then(async data => {
+                if (!data || data?.length == 0) {
+                    response = responseHandler
+                        .commitResponse(requestId, ResponseCodes.NOT_FOUND, 'Sorry, we could not find any user that matches your search', []);
+                }
+                else {
+                    let foundUsers: IUser[] = [];
+                    for(var user of data){
+                        let appUser: IUser = user.toJSON();
+                        foundUsers.push(appUser);
+                    } 
+                   response = responseHandler
+                        .commitResponse(requestId, ResponseCodes.SUCCESS, 'Users found', foundUsers);
+                    
+                }
+                resolve(response);
+            })
+            .catch(err=>{
+                response = responseHandler.handleException(requestId, 'Sorry, an error occoured while looking up user(s)', err);
+                reject(response);
+            });
+        });
+
+    }
+
+    
 }
 
 export default new ProfileSearchService();

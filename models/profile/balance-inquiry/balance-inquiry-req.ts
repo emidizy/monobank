@@ -9,5 +9,5 @@ export const balanceInquiryReq = joi.object().keys({
    // userId is required
    userId: joi.string().required(),
 
-   accountNumber: joi.string()
+   accountNumber: joi.string().length(10)
 });

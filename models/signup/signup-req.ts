@@ -30,8 +30,6 @@ import joi from '@hapi/joi';
 
     depositAmount: joi.number().min(0).required(),
 
-    country: joi.string().max(4).required(),
-
-    notificationId: joi.string()
+    country: joi.string().max(4).required()
 
 });

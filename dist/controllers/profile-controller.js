@@ -49,7 +49,7 @@ class ProfileController {
             next();
         });
     }
-    getWalletBalance(req, res, next) {
+    getUserAccountBalance(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             let response = null;
             let status = 200;
@@ -71,6 +71,28 @@ class ProfileController {
                     });
                 }
                 console.log(`value: ${value} | error: ${error}`);
+            }
+            catch (err) {
+                response = response_handler_1.default.handleException(requestId);
+            }
+            res.locals.logInfo = response;
+            res.status(status).send(response);
+            next();
+        });
+    }
+    getAllUsers(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let response = null;
+            let status = 200;
+            let requestId = response_handler_1.default.generateUniqueId();
+            console.log(requestId);
+            try {
+                yield search_service_1.default.getAllUsersInRawDatabaseFormat(requestId).then(resp => {
+                    response = resp;
+                })
+                    .catch(err => {
+                    response = err;
+                });
             }
             catch (err) {
                 response = response_handler_1.default.handleException(requestId);

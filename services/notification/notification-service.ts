@@ -4,10 +4,6 @@ import { response } from 'express';
 import { logActivity } from '../../interceptors/request-logger';
 import { Config } from '../../config';
 
-const africastalking = require('africastalking')({
-    apiKey: '145cc19323bdcbf7287a70452731f6880500ac5f9b2ecced1bbc0b27a7f4b642',         // use your sandbox app API key for development in the test environment
-    username: 'sandbox',      // use 'sandbox' for development in the test environment
-});
 
 class NotificationService {
    

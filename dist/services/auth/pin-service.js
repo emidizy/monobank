@@ -20,10 +20,10 @@ class PinService {
     setTransactionPin(requestId, userInfo) {
         return __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
-                let response;
+                let response = null;
                 //Validate user
                 let hashedPass = cipher_1.default.hash(userInfo.password);
-                user_1.default.findOne({ phone: userInfo.phone })
+                yield user_1.default.findOne({ phone: userInfo.phone })
                     .then((doc) => __awaiter(this, void 0, void 0, function* () {
                     if (doc) {
                         //Verify password is correct

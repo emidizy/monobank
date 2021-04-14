@@ -24,7 +24,6 @@ exports.signupReq = joi_1.default.object().keys({
     password: joi_1.default.string().min(6).required(),
     pin: joi_1.default.string().min(4).required(),
     depositAmount: joi_1.default.number().min(0).required(),
-    country: joi_1.default.string().max(4).required(),
-    notificationId: joi_1.default.string()
+    country: joi_1.default.string().max(4).required()
 });
 //# sourceMappingURL=signup-req.js.map

@@ -15,10 +15,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const nodemailer_1 = __importDefault(require("nodemailer"));
 const request_logger_1 = require("../../interceptors/request-logger");
 const config_1 = require("../../config");
-const africastalking = require('africastalking')({
-    apiKey: '145cc19323bdcbf7287a70452731f6880500ac5f9b2ecced1bbc0b27a7f4b642',
-    username: 'sandbox',
-});
 class NotificationService {
     sendEmail(emailReq) {
         return __awaiter(this, void 0, void 0, function* () {

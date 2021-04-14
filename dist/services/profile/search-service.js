@@ -25,7 +25,7 @@ class ProfileSearchService {
                 let searchCondition = {};
                 if (!searchByPhone && nameToSearch) {
                     searchCondition = { $and: [
-                            { is_active: true },
+                            { isActive: true },
                             { $or: [
                                     { firstname: { $regex: nameToSearch, $options: 'i' } },
                                     { lastname: { $regex: nameToSearch, $options: 'i' } }
@@ -34,7 +34,7 @@ class ProfileSearchService {
                 }
                 else if (searchByPhone && phoneToSearch) {
                     searchCondition = { $and: [
-                            { is_active: true },
+                            { isActive: true },
                             { phone: phoneToSearch }
                         ] };
                 }
@@ -95,7 +95,7 @@ class ProfileSearchService {
                 if (accountNumber) {
                     searchCondition = {
                         $and: [
-                            { is_active: true },
+                            { isActive: true },
                             { bankAccountInfo: {
                                     $elemMatch: { accountNumber: accountNumber }
                                 }
@@ -186,6 +186,35 @@ class ProfileSearchService {
                     ]
                 };
                 yield user_1.default.find(condition, { password: 0, pin: 0 }).then((data) => __awaiter(this, void 0, void 0, function* () {
+                    if (!data || (data === null || data === void 0 ? void 0 : data.length) == 0) {
+                        response = response_handler_1.default
+                            .commitResponse(requestId, response_codes_1.ResponseCodes.NOT_FOUND, 'Sorry, we could not find any user that matches your search', []);
+                    }
+                    else {
+                        let foundUsers = [];
+                        for (var user of data) {
+                            let appUser = user.toJSON();
+                            foundUsers.push(appUser);
+                        }
+                        response = response_handler_1.default
+                            .commitResponse(requestId, response_codes_1.ResponseCodes.SUCCESS, 'Users found', foundUsers);
+                    }
+                    resolve(response);
+                }))
+                    .catch(err => {
+                    response = response_handler_1.default.handleException(requestId, 'Sorry, an error occoured while looking up user(s)', err);
+                    reject(response);
+                });
+            }));
+        });
+    }
+    getAllUsersInRawDatabaseFormat(requestId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
+                let result;
+                let response = null;
+                const condition = {};
+                yield user_1.default.find(condition, { _id: 0, password: 0, pin: 0 }).then((data) => __awaiter(this, void 0, void 0, function* () {
                     if (!data || (data === null || data === void 0 ? void 0 : data.length) == 0) {
                         response = response_handler_1.default
                             .commitResponse(requestId, response_codes_1.ResponseCodes.NOT_FOUND, 'Sorry, we could not find any user that matches your search', []);

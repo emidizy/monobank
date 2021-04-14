@@ -9,7 +9,6 @@ const joi_1 = __importDefault(require("@hapi/joi"));
 exports.loginReq = joi_1.default.object().keys({
     userId: joi_1.default.string().required(),
     password: joi_1.default.string().required(),
-    notificationId: joi_1.default.string().required(),
     appVersion: joi_1.default.string().optional()
 });
 //# sourceMappingURL=login-req.js.map

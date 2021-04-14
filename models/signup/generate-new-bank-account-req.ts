@@ -8,6 +8,7 @@ export const generateNewBankAccountReq = joi.object().keys({
    // phone is required
    // and must be a string of the format +234XXXXXXXXXX
    // where X is a digit (0-9)
-   phone: joi.string().regex(/(\+)\d{13}$/).required()
-
+   phone: joi.string().regex(/(\+)\d{13}$/).required(),
+   
+   depositAmount: joi.number().min(0).required()
 });

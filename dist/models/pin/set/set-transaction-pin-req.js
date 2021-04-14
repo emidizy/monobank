@@ -11,7 +11,6 @@ exports.setTransactionPinReq = joi_1.default.object().keys({
     // and must be a string of the format +234XXXXXXXXXX
     // where X is a digit (0-9)
     phone: joi_1.default.string().regex(/(\+)\d{13}$/).required(),
-    walletId: joi_1.default.string().required(),
     password: joi_1.default.string().required(),
     pin: joi_1.default.string().length(4).required(),
 });

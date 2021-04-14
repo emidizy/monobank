@@ -18,7 +18,6 @@ const response_handler_1 = __importDefault(require("../../utilities/response-han
 const response_codes_1 = require("../../models/response-codes");
 const cipher_1 = __importDefault(require("../../utilities/cipher"));
 const email_manager_1 = __importDefault(require("../notification/email-manager"));
-const config_1 = require("../../config");
 const request_logger_1 = require("../../interceptors/request-logger");
 const profile_update_service_1 = __importDefault(require("../profile/profile-update-service"));
 const search_service_1 = __importDefault(require("../profile/search-service"));
@@ -88,7 +87,7 @@ class SignupService {
                                         isVerifiedLevel: true
                                     }
                                 };
-                                response = response_handler_1.default.commitResponse(requestId, response_codes_1.ResponseCodes.SUCCESS, `Welcome to ${config_1.Config.AppName}!`, user);
+                                response = response_handler_1.default.commitResponse(requestId, response_codes_1.ResponseCodes.SUCCESS, `Welcome to ${process.env.AppName}!`, user);
                                 //send welcome email
                                 email_manager_1.default.sendWelcomeEmail(requestId, newUser.firstname, newUser.email);
                             }))
@@ -106,16 +105,17 @@ class SignupService {
             });
         });
     }
-    generateAdditionalBankAcount(requestId, phoneNumber) {
+    generateAdditionalBankAcount(requestId, req) {
         return __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
+                const { phone, depositAmount } = req;
                 let response = null;
-                yield search_service_1.default.getUserProfile(requestId, phoneNumber)
+                yield search_service_1.default.getUserProfile(requestId, phone)
                     .then((res) => __awaiter(this, void 0, void 0, function* () {
                     if (res.code == response_codes_1.ResponseCodes.SUCCESS) {
                         let appUser = res.data;
                         //Generate New Account and Update User Profile
-                        yield this.generateBankAccount(requestId).then((newAccount) => __awaiter(this, void 0, void 0, function* () {
+                        yield this.generateBankAccount(requestId, depositAmount).then((newAccount) => __awaiter(this, void 0, void 0, function* () {
                             if (newAccount == null) {
                                 response = response_handler_1.default.commitResponse(requestId, response_codes_1.ResponseCodes.UNSUCCESSFUL, 'Sorry, account generation failed. Please retry in a moment');
                             }
@@ -129,13 +129,13 @@ class SignupService {
                                         bankAccountInfo: newAccount
                                     }
                                 };
-                                yield user_1.default.updateOne({ phone: phoneNumber }, update)
+                                yield user_1.default.updateOne({ phone: phone }, update)
                                     .then(success => {
                                     let bankAccount = {
                                         accountNo: newAccount === null || newAccount === void 0 ? void 0 : newAccount.accountNumber,
                                         accountName: `${appUser.firstname} ${appUser.lastname}`,
                                         currency: newAccount === null || newAccount === void 0 ? void 0 : newAccount.currency,
-                                        balance: 0
+                                        balance: newAccount.balance
                                     };
                                     response = response_handler_1.default
                                         .commitResponse(requestId, response_codes_1.ResponseCodes.SUCCESS, 'Bank Account created successfully', bankAccount);
@@ -162,11 +162,11 @@ class SignupService {
             }));
         });
     }
-    generateBankAccount(requestId) {
+    generateBankAccount(requestId, depositAmount = 0) {
         return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
             let response = null;
             let bankAcount = null;
-            const randomNumber = Math.floor(Math.random() * (100000 - 999998 + 1)) + 999998;
+            const randomNumber = Math.floor(Math.random() * (1000000 - 9999998 + 1)) + 9999998;
             const bankPrefix = 901;
             const accountNumber = `${bankPrefix}${randomNumber}`;
             yield this.checkIfAccountNumberExist(requestId, accountNumber)
@@ -179,7 +179,7 @@ class SignupService {
                     bankAcount = {
                         accountId: response_handler_1.default.generateUniqueId(),
                         currency: process.env.DefaultCurrency,
-                        balance: 0,
+                        balance: depositAmount,
                         lien: 0,
                         accountNumber: accountNumber,
                         createdAt: new Date()
