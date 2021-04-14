@@ -1,8 +1,9 @@
 # Mono Bank API
-A transactional API designed as a task to demonstrate my skill-set in NodeJs. Note: This API was only designed based on predefined requirements and only has access to mock data. 
+A transactional API designed as a task to demonstrate my skill-set in NodeJs. Note: This API was only designed based on predefined requirements and can be interacted with using mock data. 
 To run app locally, 
 a. Open up the project on your IDE
-b. Run application via console using 'npm start' command
+b. Run application via console using 'npm start' command.
+
 This API is hosted on heroku and accessible via https://mymonobankapi.herokuapp.com/api
 
 To Run this app locally;
